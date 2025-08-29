@@ -15,8 +15,43 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bidding.cpp">
+    <ClCompile Include="map을 이용한 버전(제출함)(더 합리적).cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="pair를 사용한 버전.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sample_data\01.inp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\01.out">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\02.inp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\02.out">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\03.inp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\03.out">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\04.inp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\04.out">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\05.inp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sample_data\05.out">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

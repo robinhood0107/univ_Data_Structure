@@ -18,6 +18,22 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="map을 이용한 버전(제출함)(더 합리적).cpp" />
+    <ClCompile Include="pair를 사용한 버전.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sample_data\01.inp" />
+    <None Include="sample_data\01.out" />
+    <None Include="sample_data\02.inp" />
+    <None Include="sample_data\02.out" />
+    <None Include="sample_data\03.inp" />
+    <None Include="sample_data\03.out" />
+    <None Include="sample_data\04.inp" />
+    <None Include="sample_data\04.out" />
+    <None Include="sample_data\05.inp" />
+    <None Include="sample_data\05.out" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -122,9 +138,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="bidding.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
