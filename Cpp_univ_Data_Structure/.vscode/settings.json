@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "makefile": "makefile",
+        "xstring": "cpp",
+        "istream": "cpp",
+        "string": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "utility": "cpp",
+        "vector": "cpp",
+        "xutility": "cpp"
+    }
+}
