@@ -59,4 +59,6 @@ int main(){
     for(auto& lt : result){
         cout << lt << "\n";
     }
+
+    //g++ pipe.cpp -g -o pipe && pipe.exe < ./sample_data/01.inp
 }
