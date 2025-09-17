@@ -11,6 +11,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <cmath>
 
 using namespace std;
 class Polynomial;
@@ -30,23 +31,23 @@ class Polynomial {
 public:
 	Polynomial();
 	//construct the polynomial p(x) = 0;
-	Polynomial& Add(Polynomial& b);
-	Polynomial& Sub(Polynomial& b);
+	Polynomial Add(Polynomial& b);
+	Polynomial Sub(Polynomial& b);
 	//Polynomial& operator + (Polynomial&);
 	//Polynomial& operator - (Polynomial&);
 	//Polynomial& operator * (Polynomial&);
 	//return the sum of the polynomials *this and b
-	Polynomial& Mult(Polynomial& b);
+	Polynomial Mult(Polynomial& b);
 	void AddTerm(const float theCoeff, const int theExp);
 	//return the product of the polynomials *this and b
 	//float Eval(float f);
 	//evaluate the polynomial *this at f and return the result
 	void NewTerm(const float theCoeff, const int theExp);
-	int Display();
+	//int Display();
 	int GetData();
 	double Eval(int);
 	friend ostream& operator <<(ostream&, Polynomial &);
-	friend istream& operator >>(istream&, Polynomial&);
+	//friend istream& operator >>(istream&, Polynomial&);
 private:
 	static Term* termArray;
 	static int capacity;
@@ -114,7 +115,7 @@ Polynomial::Polynomial():start{-1},finish{-1},terms{0}{}
 int Polynomial::GetData() {
     int i, degree; //degree는 차수
     float coef; //coef는 계수
-    int exp, newExp; //expo는 지수 이다
+    int exp, newexp; //expo는 지수 이다
     cout << "Enter Degree Of Polynomial:";
     cin >> degree; //degree는 입력으로 주어진다.
     start = free; //free = 다항식을 저장할 배열의 다음 새로운 항을 추가할 수 있는 시작 인덱스
@@ -129,7 +130,7 @@ int Polynomial::GetData() {
             newexp = static_cast<int>(rand()%degree);
         }while(newexp >= exp); //새로운 지수가 exp보다 크거나 같으면 다시 while문 => 즉, newexpo는 무조건 exp보다 작다
         exp = newexp;
-        NewTerm(coef,expo); //새로운 클래스 동적배열객체 생성(저장은 static Term* termArray에 저장됨) //여기에서 모두 하나의 static배열을 쪼개 공유해서 사용함
+        NewTerm(coef,exp); //새로운 클래스 동적배열객체 생성(저장은 static Term* termArray에 저장됨) //여기에서 모두 하나의 static배열을 쪼개 공유해서 사용함
         if(exp==0){ //exp가 0일 경우 자연수란 거니까 0 되면 바로 for문 종료
             break;
         }
@@ -167,7 +168,7 @@ ostream& operator <<(ostream& stream, Polynomial& p) {
 
 
 //2.그리고 Add() 구현하기 ==> 다항식 더하기 한후 p3=p1.sub(p2) 이렇게 해서 출력 cout << p3;하면 나오게끔
-Polynomial& Polynomial::Add(Polynomial& b){
+Polynomial Polynomial::Add(Polynomial& b){
     //a 다항식은 this!!! b 다항식은 b.start,b.finish!!!!
     int aPos = start; //1번째 다항식은 this 당연 지금 현재 클래스니까 this
     int bPos = b.start; //2번째 다항식은 b.finish부터 시작
@@ -208,7 +209,7 @@ Polynomial& Polynomial::Add(Polynomial& b){
         c.NewTerm(termArray[aPos].coef,termArray[aPos].exp);
     }
     for(;bPos<=b.finish;bPos++){//b에서 남은 bPos부터 b.finish까지 전부
-        c.NewTerm(b.termArray[bPos].exp,b.termArray[bPos].exp);
+        c.NewTerm(b.termArray[bPos].coef,b.termArray[bPos].exp);
     }
 
 
@@ -224,7 +225,7 @@ Polynomial& Polynomial::Add(Polynomial& b){
 //3.그리고 Sub()구현하기 ==> ADD에서 -로 변형만!!
 //Add만 제대로 할줄 알면 이건 쉬움
 //if(t!=0) 이거 꼭 기억해라
-Polynomial& Polynomial::Sub(Polynomial& b){
+Polynomial Polynomial::Sub(Polynomial& b){
     int aPos = start;
     int bPos = b.start;
 
@@ -273,36 +274,47 @@ void Polynomial::AddTerm(const float theCoeff, const int theExp){
     //coef가 0일 경우
     //exp가 서로 같은 차수 검색해서 있으면 계수 더하고 종료
     //같은 차수가 없다면 배열의 정렬 진행(자기 위치에 똑바로 넣기)
-    int aPos = start;
 
-    if(theCoeff == 0) return;//coef가 0일 경우
-    for(;aPos<=finish;aPos++){//exp가 같은것 찾아서 계수 더하고 종료
+
+
+    if (theCoeff == 0) return;
+
+    for(int aPos = start;aPos<=finish;aPos++){//exp가 같은것 찾아서 계수 더하고 종료
         if(termArray[aPos].exp == theExp){
-        termArray[aPos].coef += theCoeff; //+=으로 기존거에 더하기다!!!!
+            termArray[aPos].coef += theCoeff; //같은 지수면 바로 더함
+            if (termArray[aPos].coef == 0) {
+                for (int i = aPos; i < finish; i++) {
+                    termArray[i] = termArray[i + 1]; //shift-left로 지워버리면 된다!!!
+                }
+                finish--;
+                terms--;
+                free--;
+            }
+        return;//처리했으면 바로 종료해야 됨. 이게 젤 중요함. //위치 제대로 기억
         }
-        return;
     }
 
     //삽입 위치 결정 및 삽입
     //이 코드 꼭 외워라
     int insert_pos = start;
-    while((insert_pos<= finish)&&(termArray[insert_pos].exp > exp)){//나 자신보다 작아지는 처음 차수를 찾으면 됨(거기부터 1칸씩 이동하면 됨)
+    while((insert_pos<= finish)&&(termArray[insert_pos].exp > theExp)){//나 자신보다 작아지는 처음 차수를 찾으면 됨(거기부터 1칸씩 이동하면 됨)
         insert_pos++;
     }
 
     //전체 항 이동 (Shift) - 반드시 뒤에서부터!
     //free 위치부터 insert_pos 다음 위치까지의 항들을 한 칸씩 뒤로 민다.
-    for(int i = free; i > insert_pos; i-- ){
+    // 'Shift-Right'로 삽입할 공간 확보 (반드시 뒤에서부터)
+    for (int i = free; i > insert_pos; i--) {
         termArray[i] = termArray[i - 1];
     }
 
-    termArray[insert_pos].coef = coef;
-    termArray[insert_pos].exp = exp;
+    termArray[insert_pos].coef = theCoeff;
+    termArray[insert_pos].exp = theExp;
 
     finish++;
     terms++;
     free++;
-
+    return;
     //배열에서 한칸씩 미는 행동은 O(n)의 시간복잡도, 무조건 뒤에서부터 하나씩 오른쪽으로 이동시켜야만 한다!!!!!!!(뒤에서부터 기억)
 
 }
@@ -350,41 +362,30 @@ void Polynomial::AddTerm(const float theCoeff, const int theExp){
 
 //5.곱셈 !!!! Mult()
 //Add()이용하는 방법은 매우 비효율적, AddTerm(coef,exp) 방식을 사용해야 효율적임
-//일단 Add() 이용하는 법을 만들어보고 AddTerm 구현 후 mult() 구현하셈
 
-//Add() 이용하는 비효율적인 방식
-Polynomial& Polynomial::Mult(Polynomial& b){
-    int aPos = start;
-    int bPos = b.start; //마찬가지로 a는 this.start, b는 b.start
-
+//AddTerm을 이용한다
+Polynomial Polynomial::Mult(Polynomial& b){
     Polynomial c; //for문 내에서 계속 갱신될 것
     c.start = free;
+    c.finish = free - 1;
+    c.terms = 0;
     //잊지마라 c.start랑 c.finish, c.terms꼭 설정해줘야 함!
 
     //기본 전략 = 각 항별로 곱한 다음 다항식 2개를 만들어서 서로 더한다.
-    for(;aPos<=finish;aPos++){
-        for(;bPos<=b.finish;bPos++){
-            Polynomial temp; //계속 갱신되는 임시용 객체
-            temp.start = free;
-            //temp.finish = free - 1; //이건 필요없긴 해, finish랑 term은 안쓰잖아
-            //temp.terms = finish - start + 1;  //이건 필요없긴 해, finish랑 term은 안쓰잖아
+    for(int aPos = start;aPos<=finish;aPos++){
+        for(int bPos = b.start;bPos<=b.finish;bPos++){
 
             //이게 지금 첫번째 bPos랑 a의 모든 항과 곱한 다항식
-            float multcoef = termArray[aPos].coef * b.termArray[bPos].coef;
-            int multexp = termArray[aPos].exp * b.termArray[bPos].exp;
-            temp.NewTerm(multcoef, multexp); //임시에 저장
 
-            c.Add(temp);
+            //주의!!!!!!! multexp 지수는 더하는거다!!!!
+            float multcoef = termArray[aPos].coef * b.termArray[bPos].coef;
+            int multexp = termArray[aPos].exp + b.termArray[bPos].exp;//주의!!!!
+            c.AddTerm(multcoef, multexp);
         }
     }
-    c.finish = free - 1;
-    c.terms = finish - start + 1;
-
     return c;
 }
 //참고)댕글링 참조 때문에 반환값은 참조형이면 안된다. 반환값은 참조형이 아닌 것이 좋다.
-
-//AddTerm을 효율적으로 사용하는 방법
 
 
 
@@ -398,25 +399,12 @@ double Polynomial::Eval(int num) {
         //#include <cmath> 으로 pow(진수,지수) 사용하기
         //'계수 * (num ^ 차수)'
         result += current_coef * pow(num, current_exp);
-        return result;
     }
-
-
-
-
+    return result;
 }
-
-
-
-
-
-
-int Polynomial::Display() {//coef가 0이 아닌 term 만 있다고 가정한다
-}
-
 
 // enum 선언
-enum MenuChoice { ADDITION = 1, SUBTRACTION, MULTIPLICATION, EVALUATION, EXIT };
+enum MenuChoice { ADDITION = 1, SUBTRACTION, MULTIPLICATION, EVALUATION, EXIT, ADDTERM };
 
 
 //static 정적멤버 선언부 //static은 이걸 무조건 해줘야 선언되는 거임.
@@ -427,18 +415,20 @@ int Polynomial::free = 0;
 int main(void) {
 	srand(time(NULL));
 	int choice;
+        float mycoef=0;
+        int myexp=0;
 	Polynomial P1, P2, P3;
-	cout << "입력 예제: \nP(x)=5x^3+3x^1";
+	//cout << "입력 예제: \nP(x)=5x^3+3x^1\n";
 	cout << "입력 다항식 P1:-" << endl;
 	P1.GetData();
-	P1.Display();
+	cout << P1;
 	cout << "입력 다항식 P2:-" << endl;
 	P2.GetData();
-	P2.Display();
+	cout << P2;
 	cout << "****" << P2;
 	while (1) {
 		cout << "\n****** Menu Selection ******" << endl;
-		cout << "1: Addition\n2: Subtraction\n3: Multiplication\n4: Evaluation\n5: Exit" << endl;
+		cout << "1: Addition\n2: Subtraction\n3: Multiplication\n4: Evaluation\n5: Exit\n6: AddTerm" << endl;
 		cout << "Enter your choice: ";
 		cin >> choice;
 		//static_cast, dynamic_cast, const_cast 공부 필요>>정수를 열거형 변환시에 많이 사용
@@ -447,36 +437,36 @@ int main(void) {
 		case ADDITION:
 			cout << "\n--------------- Addition ---------------\n";
 			cout << "Polynomial1: ";
-			P1.Display();
+			cout << P1;
 			cout << "Polynomial2: ";
-			P2.Display();
-			P3 = P1 + P2;
+			cout << P2;
+			P3 = P1.Add(P2);
 			cout << "덧셈 결과: ";
-			P3.Display();
+			cout << P3;
 			cout << "----------------------------------------\n";
 			break;
 
 		case SUBTRACTION:
 			cout << "\n------------- Subtraction -------------\n";
 			cout << "Polynomial1: ";
-			P1.Display();
+			cout << P1;
 			cout << "Polynomial2: ";
-			P2.Display();
-			P3 = P1 - P2;
+			cout << P2;
+			P3 = P1.Sub(P2);
 			cout << "Resultant Polynomial: ";
-			P3.Display();
+			cout << P3;
 			cout << "----------------------------------------\n";
 			break;
 
 		case MULTIPLICATION:
 			cout << "\n----------- Multiplication -------------\n";
 			cout << "Polynomial1: ";
-			P1.Display();
+			cout << P1;
 			cout << "Polynomial2: ";
-			P2.Display();
-			P3 = P1*P2;
+			cout << P2;
+			P3 = P1.Mult(P2);
 			cout << "Resultant Polynomial: ";
-			P3.Display();
+			cout << P3;
 			cout << "----------------------------------------\n";
 			break;
 
@@ -485,13 +475,26 @@ int main(void) {
 			int evalValue;
 			cout << "Enter the value to evaluate Polynomial2: ";
 			cin >> evalValue;
-			P2.Eval(evalValue);
+            cout << P2;
+			cout << P2.Eval(evalValue) << "\n";
 			cout << "----------------------------------------\n";
 			break;
 
 		case EXIT:
 			cout << "Good Bye...!!!" << endl;
 			exit(0);
+
+        case ADDTERM:
+            cout << "\n----------- ADDTERM -------------\n";
+			cout << "Polynomial1: ";
+			cout << P1;
+			cout << "삽입할 coef exp";
+			cin >> mycoef >> myexp;
+			P1.AddTerm(mycoef,myexp);
+			cout << "Resultant Polynomial: ";
+			cout << P1;
+			cout << "----------------------------------------\n";
+			break;
 
 		default:
 			cout << "Invalid choice! Please select again." << endl;
