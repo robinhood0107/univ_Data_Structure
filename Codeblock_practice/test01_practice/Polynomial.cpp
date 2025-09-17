@@ -367,9 +367,13 @@ void Polynomial::AddTerm(const float theCoeff, const int theExp){
 Polynomial Polynomial::Mult(Polynomial& b){
     Polynomial c; //for문 내에서 계속 갱신될 것
     c.start = free;
+    //(매우 중요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+    //내가 여기때문에 시간 많이 씀
+    //지금 생성자에서 start랑 finish, terms를 p(0)로 초기화한 상태라서
+    //무조건!!! c.start와 c.finish를 c생성할때 무조건 먼저 만들어주고 시작해야만 한다.
     c.finish = free - 1;
     c.terms = 0;
-    //잊지마라 c.start랑 c.finish, c.terms꼭 설정해줘야 함!
+    //잊지마라 for문 쓰기 전에 c.start랑 c.finish, c.terms꼭 설정해줘야 함!
 
     //기본 전략 = 각 항별로 곱한 다음 다항식 2개를 만들어서 서로 더한다.
     for(int aPos = start;aPos<=finish;aPos++){
