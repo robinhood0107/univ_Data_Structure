@@ -199,7 +199,7 @@ Polynomial Polynomial::Add(Polynomial& b){
         }
         else{
             c.NewTerm(b.termArray[bPos].exp,b.termArray[bPos].exp);
-            aPos++; //a만 넣었으니 aPos만 증가
+            bPos++; 
         }
     }
     //for문 1개 반드시 더 필요함
@@ -248,7 +248,7 @@ Polynomial Polynomial::Sub(Polynomial& b){
         }
         else{
         //(중요)(Add와 다른 점)주의!!!!!!! a-b 상태이기 때문에 b는 부호 반대!!!!!!! - 꼭 붙여라!!!
-            c.NewTerm(-termArray[aPos].coef,termArray[aPos].exp);
+            c.NewTerm(-b.termArray[bPos].coef,-b.termArray[bPos].exp);
             bPos++;
         }
     }
@@ -257,7 +257,7 @@ Polynomial Polynomial::Sub(Polynomial& b){
     }
 
     for(;bPos<=b.finish;bPos++){//(중요)(Add와 다른 점)주의!!!!!!! a-b니까 b는 부호 반대!!! -붙여라!!
-        c.NewTerm(-termArray[aPos].coef,termArray[aPos].exp);
+        c.NewTerm(-b.termArray[bPos].coef,-b.termArray[bPos].exp);
     }
 
     c.finish = free - 1;
