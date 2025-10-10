@@ -71,7 +71,7 @@ int main() {
 
     //pop,push,top,size,empty라는 멤버함수가 있고
     //swap(stack1,stack2)으로 두 스택 내용 바꿀 수 있음.
-    //empty메서드는
+    //empty메서드는 비어있으면 1(true)
 
     //​pop의 반환값은 void이며 마지막 원소가 아닙니다. (파이썬 list의 pop()과 다릅니다)
     //push,top은 당연히 void인데 c++은 pop도 void임!!!!(파이썬이랑 다름)
@@ -181,18 +181,62 @@ int main() {
 
 
 
-    //그리고 마지막으로 heap을 사용할 수 있음!!!! (메모리의 stack메모리가 아니라 heap메모리를 사용하겠다는 것)
+    //std::priority_queue<int> max_heap; 에 대한 설명
+    /*
+    //queue는 그냥 FIFO인데 priority_queue는 우선순위가 큰 것을 FIFO(큰값을 우선순위가 높다고 봄)
+    //내부적으로 heap구조를 사용함.
+    
+    pq.push(10); // pq: [10]
+    pq.push(30); // 30이 더 크므로 top으로 -> [30, 10]
+    pq.push(20); // 30이 여전히 가장 큼 -> [30, 20, 10] (내부적으로 heap 구조)
+
+    // 우선순위가 가장 높은(가장 큰) 30을 확인(top)하고 제거(pop)
+    std::cout << pq.top() << std::endl; // 30 출력
+    pq.pop();
+
+    // 남은 원소 중 가장 큰 20을 확인하고 제거
+    std::cout << pq.top() << std::endl; // 20 출력
+    pq.pop();
+
+    이런 방식임.
+
+    //중요: 내림차순, 오름차순 결정
+    priority_queue은 내림차순(가장 큰값이 top)기본이고 <T,std::vector<T>,std::less<T>>가 기본값임 (백터로 완전 이진트리 heap을 구현함, tree 배울때 배운다)
+
+    가장 작은 수가 맨 앞(top)으로 오름차순 하고 싶으면 std::greater<T> 넣어주면 된다.
+
+    쉽게 외우는 법
+    priority_queue는 기본이 가장 큰 값이 우선순위가 높은 것이고 std::less이다
+    */
+
+    //그리고 잊지 말아야 되는게 queue는 기본적으로 tail로 들어가서 top으로 나온다는 것이다 (FIFO니까 가장 오래된게 top)
 
     // 1. 기본적으로 최대 힙을 사용하는 priority_queue
+    //가장 큰 값이 우선순위가 높은 heap을 이용
+    std::priority_queue<int> max_heap;
 
     // 요소 추가 (push)
+    max_heap.push(10); //[10]
+    max_heap.push(20); //[20,10] //20을 top으로 함
+    max_heap.push(5);  //[20,10,5]
 
     // 최대 힙에서의 출력: 큰 순서대로 출력 (20, 10, 5)
+    std::cout << "Max Heap (Priority Queue):" << std::endl;
 
     // 2. 최소 힙을 사용하려면 std::greater<T>를 사용
-
+    std::priority_queue<int,std::vector<int>,std::greater<int>> min_heap;
     // 요소 추가 (push)
+    min_heap.push(10); //[10]
+    min_heap.push(20); //[10,20]
+    min_heap.push(5);  //[5,10,20] //5가 10보다 작으니까 //완전 이진 tree:부모가 자식노드보다 작음
 
     // 최소 힙에서의 출력: 작은 순서대로 출력 (5, 10, 20)
+    std::cout << "Min Heap (Priority Queue):" << std::endl;
+    while (!min_heap.empty()) {
+        std::cout << min_heap.top() << " "; // 가장 작은 값을 출력
+        min_heap.pop(); // 가장 작은 값을 제거
+    }
+    std::cout << std::endl;
 
+    return 0;
 }

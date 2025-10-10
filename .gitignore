@@ -514,4 +514,8 @@ FodyWeavers.xsd
 #실행 파일들 삭제
 *.exe
 
+#/.vscode 파일 무시
+.vscode/
+
+
 # End of https://www.toptal.com/developers/gitignore/api/clion+all,visualstudio,visualstudiocode,codeblocks
