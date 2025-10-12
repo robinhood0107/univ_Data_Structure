@@ -23,29 +23,43 @@ public:
 
 };
 
-//
-Stack::Stack(int stackCapacity):stackCapacity{4} {
+template <class T>
+Stack<T>::Stack(int stackCapacity){
 
-}
-bool Stack::IsFull() {
 
-}
-bool Stack::IsEmpty() {
-
-}
-T& Stack::Peek() {
-
-}
-void Stack::Push(const T& item){
-
-}
-T& Stack::Pop(){
-
-}
-void Stack::Dump() {
 
 }
 
+template <class T>
+bool Stack<T>::IsFull() const {
+
+}
+
+
+template <class T>
+bool Stack<T>::IsEmpty() const {
+
+}
+
+template <class T>
+T& Stack<T>::Peek() const {
+
+}
+
+template <class T>
+void Stack<T>::Push(const T& item){
+
+}
+
+template <class T>
+T& Stack<T>::Pop(){
+
+}
+
+template <class T>
+void Stack<T>::Dump() {
+
+}
 
 class Point {
 private:
