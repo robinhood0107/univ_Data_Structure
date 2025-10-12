@@ -10,6 +10,23 @@ using namespace std;
 //혹시 모르니까 이 예외도 외워서 작성할 수 있도록 전부 암기해두기
 //그리고 항상 책 기준으로 작성한 것을 외워야 한다. 그래야 타율이 아주 좋음.
 
+template <class T>
+class Stack {
+public:
+	Stack(int stackCapacity = 4);
+	~Stack();
+	bool IsFull() const;
+	bool IsEmpty() const;
+	T& Peek() const;//예외 - 빈 스택
+	void Push(const T& item);////예외 - full 스택
+	T& Pop();//예외 - 빈 스택
+	void Dump();//예외 - 빈 스택
+private:
+	T* stack;
+	int top;
+	int capacity;
+};
+
 
 //--- 실행시 예외: 스택이 비어 있음 ---//
 class EmptyStackException : public std::exception {
@@ -87,7 +104,7 @@ bool Stack<T>::IsEmpty() const {
 template <class T>
 T& Stack<T>::Peek() const {
 	//Peek은 옅보다, 집다의 뜻이다!!!
-	if(isEmpty()){
+	if(IsEmpty()){
 		throw EmptyStackException();
 	}
 	return stack[top];
@@ -149,6 +166,7 @@ void Stack<T>::Dump() {
 	for (int i = 0; i <= top; i++) {
         std::cout << stack[i] << " ";
     }
+	std::cout << "\n";
 }
 
 
@@ -169,24 +187,6 @@ void Stack<T>::Dump() {
 //         return os;
 //     }
 // };
-
-
-template <class T>
-class Stack {
-public:
-	Stack(int stackCapacity = 4);
-	~Stack();
-	bool IsFull() const;
-	bool IsEmpty() const;
-	T& Peek() const;//예외 - 빈 스택
-	void Push(const T& item);////예외 - full 스택
-	T& Pop();//예외 - 빈 스택
-	void Dump();//예외 - 빈 스택
-private:
-	T* stack;
-	int top;
-	int capacity;
-};
 
 
 

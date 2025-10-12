@@ -23,6 +23,23 @@ public:
 
 };
 
+
+template <class T>
+class Stack {
+public:
+	Stack(int stackCapacity = 4);
+	bool IsFull() const;
+	bool IsEmpty() const;
+	T& Peek() const;//예외 - 빈 스택
+	void Push(const T& item);////예외 - full 스택
+	T& Pop();//예외 - 빈 스택
+	void Dump();//예외 - 빈 스택
+private:
+	T* stack;
+	int top;
+	int capacity;
+};
+
 template <class T>
 Stack<T>::Stack(int stackCapacity){
 
@@ -60,23 +77,6 @@ template <class T>
 void Stack<T>::Dump() {
 
 }
-
-
-template <class T>
-class Stack {
-public:
-	Stack(int stackCapacity = 4);
-	bool IsFull() const;
-	bool IsEmpty() const;
-	T& Peek() const;//예외 - 빈 스택
-	void Push(const T& item);////예외 - full 스택
-	T& Pop();//예외 - 빈 스택
-	void Dump();//예외 - 빈 스택
-private:
-	T* stack;
-	int top;
-	int capacity;
-};
 
 
 
