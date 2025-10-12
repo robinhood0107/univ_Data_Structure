@@ -61,14 +61,6 @@ void Stack<T>::Dump() {
 
 }
 
-class Point {
-private:
-	int ix;
-	int iy;
-public:
-
-};
-
 
 template <class T>
 class Stack {

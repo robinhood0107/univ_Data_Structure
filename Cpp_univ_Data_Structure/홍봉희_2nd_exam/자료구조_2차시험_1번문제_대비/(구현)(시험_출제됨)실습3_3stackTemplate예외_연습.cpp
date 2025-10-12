@@ -86,47 +86,69 @@ bool Stack<T>::IsEmpty() const {
 
 template <class T>
 T& Stack<T>::Peek() const {
-//이게 뭔 함수지? dump랑 함께 chageid 이 함수 분해해서 이거 어떻게 작성하는지 한번 보기
-
-//Peek은 데이터 꼭대기 삭제 안하고 출력하는 것(top()이라 생각해야 함)
+	//Peek은 옅보다, 집다의 뜻이다!!!
+	if(isEmpty()){
+		throw EmptyStackException();
+	}
+	return stack[top];
+	//그냥 꼭대기 top만 출력하면 됨
+	
 }
 
 //push의 경우는 교수님이 틀린 코드 만들어 두면 그 코드 고쳐서 실행 할 수 있는 상태로 변경하라고 하심.
 template <class T>
 void Stack<T>::Push(const T& item){
-	//Push의 경우는 이전에 bag할때랑 똑같이 full일 경우에는 capacity를 2배로 만들어 준다음에 delete하고 new로 재할당하는 방식으로 deep copy (이걸 기억해라)
+	//push는 교수님이 시험을 어떻게 내실지는 모르겠는데 1.확장 2배를 하는 경우 2.예외 던지는 경우 이 2가지로 코드를 짤 수 있음.
+	//일단 어떻게 될지 몰라서 2개 다 전부 외워두기
+
+	//암튼 코드 2가지임. 어쩌피 시험문제는 교수님이 코드 주고 내가 그걸 디버깅하는 형식이다.
+	//아무튼 stack[++top] = item; 이런 방식으로 추가되니까 이거 외워두기
+
+	//1.확장 2배를 하는 경우의 코드
+	/*
+	T* temp = new T[2 * capacity];
+	int number = oldSize;
+	if (capacity > 2 * capacity) number = 2 * capacity;
+	//copy(item, item + number, temp);
+	memcpy(temp, item, number);
+	delete[ ] item;
+	item = temp;
+	capacity *= 2; //이거 꼭 해줘야지, 너가 2배 늘렸으면 capacity도 2배 늘려서 확장
+	*/
+
+	//2.isfull일 경우 그냥 예외처리하는 경우
 	if(IsFull()){
-		//push는 교수님이 시험을 어떻게 내실지는 모르겠는데 1.확장 2배를 하는 경우 2.예외 던지는 경우 이 2가지로 코드를 짤 수 있음.
-		//일단 어떻게 될지 몰라서 2개 다 전부 외워두기
-
-		//암튼 코드 2가지임. 어쩌피 시험문제는 교수님이 코드 주고 내가 그걸 디버깅하는 형식이다.
-		//아무튼 stack[++top] = item; 이런 방식으로 추가되니까 이거 외워두기
-
-		//1.확장 2배를 하는 경우의 코드
-		넣을것, 옛날크기, 지금크기
-		if (newSize < 0) throw "New length must be >= 0";
-		T* temp = new T[newSize];
-		int number = oldSize;
-		if (oldSize > newSize) number = newSize;
-		//copy(a, a + number, temp);
-		memcpy(temp, a, number);
-		delete[ ] a;
-		a = temp;
-		capacity *= 2; //이거 꼭 해줘야지, 너가 2배 늘렸으면 capacity도 2배 늘려서 확장
+		throw OverflowStackException();
 	}
+	stack[++top] = item;
 }
 
 template <class T>
 T& Stack<T>::Pop(){
+	if(IsEmpty()){
+		throw EmptyStackException();
+	}
+	return stack[top--];
+	//삭제는 이렇게 한다 
+	//사실 그냥 stack[top--]만 return 해줘도 지워짐
 
+	//만약 pop()함수가 void일 경우!!!
+	//stack[top--].~T(); 
+
+	//반드시 후위감소해야함. 반드시 top--이어야 함.
+	//객체.~T() 구문은 해당 객체의 소멸자를 강제로 직접 호출하는 C++의 특별한 문법입니다.    //(보통 소멸자는 delete 키워드를 사용하거나, 지역 변수가 범위를 벗어날 때 자동으로 호출됩니다. 이렇게 직접 호출하는 경우는 메모리 관리나 객체의 생명 주기를 수동으로 제어해야 하는 특별한 상황에 사용됩니다.)
+	//즉, 다시말하면 해당 원소가 int라면 stack[top--].~int(); 이렇게 멤버함수를 호출할 경우에는 소멸자를 호출하는 것이니까 바로 지워져버림.
 }
 
 template <class T>
 void Stack<T>::Dump() {
 //디버깅 용으로 지금 stack이 가지고 있는 것을 전부 출력하는 함수임.
-
-
-
+	if (IsEmpty()) {
+            throw EmptyStackException();
+        }
+	for (int i = 0; i <= top; i++) {
+        std::cout << stack[i] << " ";
+    }
 }
 
 
@@ -134,13 +156,19 @@ void Stack<T>::Dump() {
 //일단 stack하고 queen이랑 knight 연습하고 queue 연습하러 가자
 
 
-class Point {
-private:
-	int ix;
-	int iy;
-public:
-
-};
+// 이거 잘못 들어간 것 같음
+// class Point {
+// private:
+// 	int ix;
+// 	int iy;
+// public:
+// 	Point(int x = 0, int y = 0) : ix(x), iy(y) {}
+//     // Point 객체를 출력하기 위한 friend 함수
+//     friend ostream& operator<<(ostream& os, const Point& pt) {
+//         os << "(" << pt.ix << ", " << pt.iy << ")";
+//         return os;
+//     }
+// };
 
 
 template <class T>

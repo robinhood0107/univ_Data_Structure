@@ -22,31 +22,40 @@ public:
 
 };
 
-Queue::Queue(int queueCapacity) :queueCapacity{10} {
+template <class T>
+Queue<T>::Queue(int queueCapacity) :queueCapacity{10} {
 
 }
-T& Queue::Front() {
+template <class T>
+T& Queue<T>::Front() {
 
 }
-T& Queue::Rear() {
+template <class T>
+T& Queue<T>::Rear() {
 
 }
-void Queue::Push(T const& x) {
+template <class T>
+void Queue<T>::Push(T const& x) {
 
 }
-void Queue::Pop() {
+template <class T>
+void Queue<T>::Pop() {
 
 }
-bool Queue::IsFull() {
+template <class T>
+bool Queue<T>::IsFull() const{
 
 }
-bool Queue::IsEmpty() {
+template <class T>
+bool Queue<T>::IsEmpty() const{
 
 }
-T& Queue::Peek() {
+template <class T>
+T& Queue<T>::Peek() const{
 
 }
-void Queue::Dump(){
+template <class T>
+void Queue<T>::Dump(){
 
 }
 

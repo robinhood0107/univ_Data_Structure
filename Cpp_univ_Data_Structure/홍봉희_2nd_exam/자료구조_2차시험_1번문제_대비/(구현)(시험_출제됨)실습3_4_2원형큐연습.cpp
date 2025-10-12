@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
@@ -21,7 +20,7 @@ private:
 public:
 
     class EmptyQueueException : public runtime_error {
- 
+        
     };
 
     class OverflowQueueException : public runtime_error {
