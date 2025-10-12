@@ -4,6 +4,10 @@
 #include <ctime>
 using namespace std;
 
+
+
+//원형 큐 그냥 이거 연습하면 된다고 하심.
+
 class Point5 {
 private:
     int ix, iy;
