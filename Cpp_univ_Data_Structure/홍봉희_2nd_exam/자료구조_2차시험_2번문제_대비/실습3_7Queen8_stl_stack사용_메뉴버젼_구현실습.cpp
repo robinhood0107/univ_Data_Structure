@@ -167,7 +167,7 @@ int solveQueen(int d[][COL], bool findAll) {
             //해를 찾았으면 마지막에 놓인 퀸을 제거하고 그 위치의 다음 열부터 시도한다. //나머지 stack을 처리하는 것
             if (st.empty()) break;
             //주의!!!!!! 항상 top 먼저!!
-            Point last = st.top(); //스택에 있는 top을 last로 이름짓고
+            Point last = st.top(); //스택에 있는 top을 last로 이름짓고 //stack stl 사용하려면 이렇게 해줘야 함
             st.pop();
             d[last.getX()][last.getY()] = 0; //해당 퀸 제거
             --count; //카운트 내리고

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <stdexcept>
 #define ROW 8
 #define COL 8
 
@@ -27,8 +28,9 @@ public:
     Stack(int stackCapacity = 10);
     ~Stack();
     bool IsEmpty() const;
+    T& Top() const;
     void Push(const T& item);
-    T Pop();
+    void Pop();
 private:
     T* stack;
     int top;
@@ -53,18 +55,24 @@ template <class T>
 void Stack<T>::Push(const T& item) {
     if (top + 1 >= capacity) {
         // 간단 처리: 재할당 없이 에러 출력 (원하면 재할당 추가 가능)
-        cerr << "Stack overflow\n";
-        return;
+        throw std::out_of_range("Overflow");
     }
     stack[++top] = item;
 }
 template <class T>
-T Stack<T>::Pop() {
+void Stack<T>::Pop() {
     if (IsEmpty()) {
-        cerr << "Pop from empty stack\n";
-        return T(); // 기본값 반환
+        throw std::out_of_range("Top() called on an empty stack");
     }
-    return stack[top--];
+    top--;
+}
+
+template <class T>
+T& Stack<T>::Top() const {
+    if (IsEmpty()) {
+        throw std::out_of_range("Top() called on an empty stack");
+    }
+    return stack[top];
 }
 
 // --- 다음 함수들은 사용자가 이미 구현해 둔 것으로 가정 ---
@@ -129,12 +137,15 @@ int solveQueen(int d[][COL], bool findAll) { // 주어진 코드 구조를 따�
 
     while (true) {
         // 해를 찾았는지 (count가 ROW일 때)
-        if (count == ROW) {
+        if (count == 8) {
             showQueens(d);
             ++solutions;
+            if (!findAll) break; // 하나의 해만 찾으면 종료
+            
             // 다음 해를 찾기 위해 백트래킹 (마지막에 놓은 퀸을 제거)
             if (st->IsEmpty()) break;
-            Point last = st->Pop();
+            const Point& last = st->Top();
+            st->Pop();
             d[last.getX()][last.getY()] = 0;
             --count;
             ix = last.getX();
@@ -146,7 +157,8 @@ int solveQueen(int d[][COL], bool findAll) { // 주어진 코드 구조를 따�
         if ((iy = nextMove(d, ix, iy)) == -1) {
             // 더 놓을 곳이 없다 -> 백트래킹
             if (st->IsEmpty()) break;
-            Point last = st->Pop();
+            const Point& last = st->Top();
+            st->Pop();
             d[last.getX()][last.getY()] = 0;
             --count;
             ix = last.getX();
@@ -165,13 +177,7 @@ int solveQueen(int d[][COL], bool findAll) { // 주어진 코드 구조를 따�
         ++ix;
         iy = 0;
     }
-
-    cout << "Total solutions (with initial (0,0) placed): " << solutions << '\n';
-
-    // 정리
-    delete p;
-    delete px;
-    delete st;
+    return solutions;
 }
 
 // 메뉴 옵션을 위한 enum
