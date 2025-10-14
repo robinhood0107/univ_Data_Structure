@@ -92,12 +92,12 @@ bool checkDiagSE(int d[][COL], int cx, int cy) { // x++, y++ or x--, y--
     //현재 위치가 cx, cy일때 (남동=북서)대각선 1가지 경우(x, y 움직임 같음)
 
 
-    //남서방향(아래로)
+    //남동방향(아래로)
     for (int x = cx+1, y = cy+1; x < ROW && y < COL; ++x, ++y){ //둘다 인덱스 7보단 작아야 하니까 <
         if(d[x][y] == 1) return false;
     }      
 
-    //북동방향(위로)
+    //북서방향(위로)
     for (int x = cx-1, y = cy-1; x >= 0 && y >= 0; --x, --y){ //COL보단 < 작아야 하고(인덱스 7까지니까), y는 0보다 커야 함.
         if(d[x][y] == 1) return false;
     }
