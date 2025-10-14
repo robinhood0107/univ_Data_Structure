@@ -9,10 +9,14 @@ struct MyAllocator {
 
     // 메모리 할당
     T* allocate(std::size_t n) {
+        std::cout << "Allocating: 총 " << n << "개의 원소를 allocate 합니다(동적할당)" << "\n";
+        return static_cast<T*>(::operator new(n * sizeof(T)));
     }
 
     // 메모리 해제
     void deallocate(T* p, std::size_t n) {
+        std::cout << "Deallocating: 총 " << n << "개의 원소를 deallocate 합니다(메모리 해제)" << "\n";
+        ::operator delete(p);
     }
 };
 
@@ -30,12 +34,12 @@ int main() {
     }
     //
     // MyAllocator<int>를 사용하는 list
-    std::list<int, MyAllocator<int>> my_list;
+    std::list<int, MyAllocator<int>> my_list_custom_allocator;
 
-    my_list.push_back(1);
-    my_list.push_back(2);
+    my_list_custom_allocator.push_back(1);
+    my_list_custom_allocator.push_back(2);
 
-    for (const int& val : my_list) {
+    for (const int& val : my_list_custom_allocator) {
         std::cout << val << " ";
     }
     return 0;

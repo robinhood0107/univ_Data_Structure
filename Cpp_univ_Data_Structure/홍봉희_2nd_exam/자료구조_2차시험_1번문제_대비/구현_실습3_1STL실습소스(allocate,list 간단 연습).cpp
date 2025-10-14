@@ -13,7 +13,7 @@ struct MyAllocator {
     //컨테이너 stl을 사용할 때 allocate를 이용하면 내 맘대로 메모리 할당/해제를 조작해서 나만의 new, delete를 만들어 줄 수 있음.
     T* allocate(std::size_t n) {
         //걍 내 스스로 공부하는 거니까 한글출력은 내가 창작해서 조정
-        std::cout << "Allocating: 총 " << n << "개의 원소를 allocate 합니다(동적할당)";
+        std::cout << "Allocating: 총 " << n << "개의 원소를 allocate 합니다(동적할당)" << "\n";
 
         return static_cast<T*>(::operator new(n * sizeof(T)));
         //global scope의 new를 연산자 오버로딩
@@ -83,7 +83,7 @@ struct MyAllocator {
 
     // 메모리 해제
     void deallocate(T* p, std::size_t n) {
-        std::cout << "Deallocateing: 총 " << n << "개의 원소를 deallocate(메모리 해제)";
+        std::cout << "Deallocateing: 총 " << n << "개의 원소를 deallocate(메모리 해제)" << "\n";
         ::operator delete(p);
         //global scope의 delete를 연산자 오버로딩
     }
@@ -104,13 +104,13 @@ int main() {
     }
 
     // MyAllocator<int>를 사용하는 list
-    std::list<int, MyAllocator<int>> my_list;
+    std::list<int, MyAllocator<int>> my_list_custom_allocator;
 
-    my_list.push_back(1);
-    my_list.push_back(2);
+    my_list_custom_allocator.push_back(1);
+    my_list_custom_allocator.push_back(2);
     //이것처럼 MyAllocator라는 내 특제 allocate를 사용해도 잘 작동함
 
-    for (const int& val : my_list) {
+    for (const int& val : my_list_custom_allocator) {
         std::cout << val << " ";
     }
     return 0;
