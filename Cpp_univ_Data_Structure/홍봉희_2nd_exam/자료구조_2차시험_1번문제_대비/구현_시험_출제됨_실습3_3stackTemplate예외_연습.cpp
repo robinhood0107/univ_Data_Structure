@@ -115,25 +115,6 @@ T& Stack<T>::Peek() const {
 //push의 경우는 교수님이 틀린 코드 만들어 두면 그 코드 고쳐서 실행 할 수 있는 상태로 변경하라고 하심.
 template <class T>
 void Stack<T>::Push(const T& item){
-	//push는 교수님이 시험을 어떻게 내실지는 모르겠는데 1.확장 2배를 하는 경우 2.예외 던지는 경우 이 2가지로 코드를 짤 수 있음.
-	//일단 어떻게 될지 몰라서 2개 다 전부 외워두기
-
-	//암튼 코드 2가지임. 어쩌피 시험문제는 교수님이 코드 주고 내가 그걸 디버깅하는 형식이다.
-	//아무튼 stack[++top] = item; 이런 방식으로 추가되니까 이거 외워두기
-
-	//1.확장 2배를 하는 경우의 코드
-	/*
-	T* temp = new T[2 * capacity];
-	int number = oldSize;
-	if (capacity > 2 * capacity) number = 2 * capacity;
-	//copy(item, item + number, temp);
-	memcpy(temp, item, number);
-	delete[ ] item;
-	item = temp;
-	capacity *= 2; //이거 꼭 해줘야지, 너가 2배 늘렸으면 capacity도 2배 늘려서 확장
-	*/
-
-	//2.isfull일 경우 그냥 예외처리하는 경우
 	if(IsFull()){
 		throw OverflowStackException();
 	}
