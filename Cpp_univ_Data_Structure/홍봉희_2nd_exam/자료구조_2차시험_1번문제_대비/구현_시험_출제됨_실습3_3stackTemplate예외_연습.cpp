@@ -155,19 +155,6 @@ void Stack<T>::Dump() {
 //일단 stack하고 queen이랑 knight 연습하고 queue 연습하러 가자
 
 
-// 이거 잘못 들어간 것 같음
-// class Point {
-// private:
-// 	int ix;
-// 	int iy;
-// public:
-// 	Point(int x = 0, int y = 0) : ix(x), iy(y) {}
-//     // Point 객체를 출력하기 위한 friend 함수
-//     friend ostream& operator<<(ostream& os, const Point& pt) {
-//         os << "(" << pt.ix << ", " << pt.iy << ")";
-//         return os;
-//     }
-// };
 
 
 

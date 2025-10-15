@@ -48,18 +48,25 @@ class Stack {
 public:
 	Stack(int stackCapacity = 4){
 	}
-	bool IsFull() const;
-	bool IsEmpty() const;
-	Point& Peek() const;//예외 - 빈 스택
-	void Push(const Point& item);////예외 - full 스택
-	Point& Pop();//예외 - 빈 스택
-	void Dump();//예외 - 빈 스택
+	bool IsFull() const{
+	}
+	bool IsEmpty() const{
+	}
+	Point& Peek() const{
+	}
+	void Push(const Point& item){
+	}
+	Point& Pop(){
+	}
+	void Dump(){
+	}
 private:
 	Point* st;
 	int top;
 	int capacity;
 };
 
+//main도 수정해야 한다!!!!
 
 
 // Menu 열거형 정의

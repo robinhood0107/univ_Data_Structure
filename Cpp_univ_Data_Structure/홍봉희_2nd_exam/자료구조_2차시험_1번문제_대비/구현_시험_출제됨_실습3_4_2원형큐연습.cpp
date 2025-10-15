@@ -78,10 +78,10 @@ public:
             throw OverflowQueueException("오버플로우! 큐가 가득 찼습니다.");
         }
 
+        //빈칸을 가리키는 rear 한칸에 저장
+        que[rear] = it;
         //rear를 한칸 앞으로 하면 된다.
         rear = (rear + 1) % capacity;
-        //그리고 그 확보한 한칸에 저장
-        que[rear] = it;
 
         //반드시 잊지말고 isEmptyTag를 false로 만들어야 한다.
         isEmptyTag = false;
@@ -104,7 +104,7 @@ public:
 
         //매우 중요(여기서 rear=front를 무조건 다시 검사해야 함!!! isEmptyTag == 0 이면 반드시 )
         //여기 조정하는게 중요
-        if(rear=front){
+        if (front == rear) {
             isEmptyTag = true;
         }
         
@@ -158,19 +158,22 @@ public:
     }
 
     void dump() const {
-        if(isEmpty()){
-            throw EmptyQueueException("비어있음");
+        if (isEmpty()) {
+            throw EmptyQueueException("덤프할 데이터가 없습니다.");
         }
-        for(int i=0; i<size(); i++){
-            cout << que[i] << ' ';
+        // [수정] i를 0부터 순회하면 안 되고, front부터 시작해서 원형으로 돌아야 합니다.
+        for (int i = 0; i < size(); ++i) {
+            int index = (front + i) % capacity;
+            cout << que[index] << " ";
         }
+        cout << endl;
     }
 
     Point5 peek() const {
         if(isEmpty()){
             throw EmptyQueueException("비어있음");
         }
-        return que[(front+1)%capacity];
+        return que[front];
     }
 };
 
