@@ -28,7 +28,7 @@ constexpr int N = 5;            // 보드 크기 (원하면 6,7,8 등으로 변�
 
 혹시 더 공부하고 싶으면 바른스도르프 규칙(Warnsdorff's rule)을 찾아봐라
 */
-constexpr bool find_all = false; // true: 모든 해 탐색, false: 첫 해에서 종료
+constexpr bool find_all = true; // true: 모든 해 탐색, false: 첫 해에서 종료
 
 // 8가지 나이트 이동
 Offset moves[8] = {
@@ -128,7 +128,7 @@ bool solveKnightTourFrom(int sx, int sy) {
             }
         }
     }
-    return false; // (find_all=false 인 경우에만 의미 있음) //(numSolutions > 0)와 같음
+    return numSolutions > 0; // (find_all=false 인 경우에만 의미 있음) //(numSolutions > 0)와 같음
 }
 
 int main() {
