@@ -2,7 +2,6 @@
 #include <iostream>
 #include <memory>
 #include <fstream>
-#include <stack>
 
 using namespace std;
 #define MaxSize 100
@@ -92,16 +91,10 @@ void initializeMaze() {
             /*
             * maze[], mark[] 테이블 초기화
             */
-            //여기 합치는 거는 조건 확실히 기억해  0 0 13 16 암튼 최외곽 벽을 1로 무조건 초기화
-            //나머지는 maze[]에 input i-1,j-1 집어넣기
-            if((i==0) || (j==0) || (i==13)|| (j==16)){
-                maze[i][j] = 1;
-            }else{
-                //주의할 부분 i-1,j-1인 것 꼭 기억!!!
-                maze[i][j] = input[i-1][j-1];
-            }
+            if ((i == 0) || (j == 0) || (i == 13) || (j == 16)) maze[i][j] = 1;
+            else maze[i][j] = input[i-1][j-1];
+            mark[i][j] =0
 
-            mark[i][j] = 0;
         }
     }
 
@@ -109,78 +102,51 @@ void initializeMaze() {
 }
 
 void showMatrix(int d[][100], int row, int col) {
-    //2중 for문으로 보여주면 됨
-    for (int i = 0; i <= row; i++) {
-        for (int j = 0; j <= col; j++) {
-            cout << d[i][j] << " ";
-        }
-            cout << endl;
-        }
 
 }
 
 void findPath(int m, int p) {
     try {
-    //백트래킹 시작은 항상 초깃값 설정부터하고 해당값 stack에 넣기
-    stack<items> st;
-    items temp;
-    temp.x = 1;
-    temp.y = 1;
-    temp.dir = E;//동쪽부터 시작
-    st.push(temp);
 
-    while(!st.empty()){
+    //1.stack에 top요소들 저장
+    //while을 통해 8방향 탐색
+        //여기서 gj f랑 mp 같을 때
+        //여기서 maze랑 mark 암기
 
-        //외워야 할 흐름
-        //1.stack의 top요소들 변수에 저장하고 "pop 꼭 해야 한다!!!!!"
-        //2.while(d<8)을 이용한 8방향 탐색
-            //여기서 int g = i+moves[d].a; 이 방식 사용한다.
-        //2-1. 출구를 찾았을 경우 (g,j)가 m,p일 경우임
-            //이때는 g,h랑 i,j(현위치) 2로 만들고 return으로 빠져나오기
-        //2-2. 아직 미로 중간일 경우
-            //이건 외워주기 maze[g][h] == 0 && mark[g][h] == 0 인 경우
-            //이때는 g,h 방문했다고 하고 백트리킹을 하는데 temp를 i,j로 재설정한 후에 dir을 하나 늘리고 push해준다
-        //2-3. 전부 다 실패시는 그냥 else로 d++;를 해주면 된다
+    temp = st.top();
+    st.pop();
+    int i = temp.x;
+    int j = temp.y;
+    int d = temp.dir;
 
-        //마지막에 반드시 백트래킹으로 전부 실패시 while안 제일 마지막에 현위치의 mark와 maze를 0으로 설정
-        temp = st.top();
-        st.pop();
-        int i = temp.x;
-        int j = temp.y;
-        int d = temp.dir;
+    while(d<8){
+        int g = i+ moves[d].a;
+        int h = j+ moves[d].a;
 
-        while(d<8){
-            int g = i + moves[d].a;
-            int h = j + moves[d].b;
+        if((g==m)&&(h==p)){
+        //걍 바로 종료시키기
+            mark[g][h] = 2;
+            mark[i][j] = 2;
+        return;
+        }
 
-            if((g==m)&&(h==p)){
-                mark[g][h] = 2;
-                mark[i][j] = 2;
-                return;
-            }
+        if((maze[g][h] == 0)&&(mark[g][h] == 0)){
+            //일단 체크
+            mark[g][h] = 1;
 
-            if((maze[g][h] == 0)&&(mark[g][h] == 0)){
-                mark[g][h] = 1;
+            //temp에해당 좌표 넣고 stack에 올림
 
-                //다음 시도할 방향 stack에 up
-                temp.x = i;
-                temp.y = j;
-                temp.dir = d + 1;
-                st.push(temp);
-
-
-                //gh중립으로 제설정
-                i = g;
-                j = h;
-                d = N;
-            }else{
-                d++;
-            }
+        //gh중립으로 제설정
+            i = g;
+            j = h;
+            d = N;
 
         }
-        mark[i][j] = 0;
-        maze[i][j] = 0;
+        else
+            d++;
     }
+
+
 
 
 
