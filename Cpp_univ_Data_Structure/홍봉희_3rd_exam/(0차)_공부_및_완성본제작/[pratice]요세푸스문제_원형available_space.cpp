@@ -13,6 +13,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <time.h>
+#include <sstream>
 using namespace std;
 
 
@@ -399,6 +401,7 @@ int CircularList::SolveJosephus(vector<int> &testData, int K) { //배열길이, 
 
 
 
+/*
 enum Menu {JOSEPHUS,QUIT}; //그냥 이렇게 선언할 경우 0부터 시작한다
 
 ///매우 중요///////////
@@ -452,4 +455,161 @@ int main() {
     
     return 0;
 }
+*/
 
+
+
+
+//다른 여러가지 입력들도 고려한 버전
+
+enum Menu {
+    Add1,     // 0
+    Add2,     // 1
+    Delete,   // 2
+    Show,     // 3
+    Search,   // 4
+    Merge,    // 5
+    Josephus, // 6
+    make_list,  // 7
+    Exit      // 8
+};
+
+///매우 중요///////////
+Node* CircularList::av = nullptr;
+//static이므로 이거 무조건 해줘야 한다!!!! 반드시 기억
+
+int main() {
+    int selectMenu;
+    int num = 0; bool result = false;
+    vector<int> testData;
+    
+    // rand()를 위한 시드 초기화
+    srand(time(NULL)); 
+
+    CircularList la, lb, lc; // CircularList 사용 (이름만 la, lb, lc로 변경)
+    int data = 0;
+    
+    do {
+        cout << "\n0.Add1, 1.Add2, 2.Delete, 3.Show, 4.Search, 5.Merge, 6.Josephus, 7.make_list, 8.Exit 선택::";
+        cin >> selectMenu;
+
+        switch (static_cast<Menu>(selectMenu)) {
+            
+            case Add1: // 0. A에 랜덤 데이터 추가
+                data = rand() % 49 + 1; // 1~49 사이의 랜덤 숫자
+                la.Add(data);
+                cout << "  리스트 la에 " << data << " 추가됨." << endl;
+                break;
+
+            case Add2: // 1. B에 랜덤 데이터 추가
+                data = rand() % 49 + 1; // 1~49 사이의 랜덤 숫자
+                lb.Add(data);
+                cout << "  리스트 lb에 " << data << " 추가됨." << endl;
+                break;
+
+            case Delete: // 2. A에서 삭제
+                cout << "  삭제할 데이터 입력: ";
+                cin >> data;
+                result = la.Delete(data);
+                if (result)
+                    cout << "  " << data << " 삭제 완료.";
+                else
+                    cout << "  " << data << "를 찾지 못했습니다.";
+                break;
+
+            case Show: // 3. 모든 리스트 보기
+                cout << "  리스트 la = "; la.Show();
+                cout << "  리스트 lb = "; lb.Show();
+                cout << "  리스트 lc = "; lc.Show();
+                break;
+
+            case Search: // 4. A에서 검색
+                cout << "  검색할 데이터 입력: ";
+                cin >> data; // data 변수 재활용
+                result = la.Search(data);
+                if (!result)
+                    cout << "  검색 값 = " << data << " 데이터가 없습니다.";
+                else
+                    cout << "  검색 값 = " << data << " 데이터가 존재합니다.";
+                break;
+
+            case Merge: // 5. 병합
+                lc = la + lb;
+                cout << "  리스트 lc = ";
+                lc.Show();
+                break;
+
+            case Josephus: { // 6. 요세푸스 문제 ({}로 지역변수 범위 생성)
+                int n, k;
+                n = testData.size();
+                cout << "  요세푸스 문제. 총 인원 (N): " << n;
+                cout << "  제거 간격 (K): ";
+                cin >> k;
+                if (n > 0 && k > 0) {
+                    la.SolveJosephus(testData, k); 
+                } else {
+                    cout << " N과 K는 0보다 커야 합니다." << endl;
+                }
+                break;
+            }
+
+            case make_list: { // 7. 한 줄의 입력을 받아 vector로 추가
+                cout << "  리스트 la에 추가할 숫자들을 한 줄로 입력하세요 (예: 20 10 50 40 5):" << endl;
+                cin.ignore();
+
+                string line;
+                getline(cin, line);
+                stringstream ss(line);
+                
+                int number;
+                while (ss >> number) {
+                    testData.push_back(number); // 뽑아낸 숫자를 testData에 추가
+                }
+                
+                cout << "[";
+                for(int i=0; i<testData.size();i++){
+                    cout << testData[i];
+                    if(i!=testData.size()-1){
+                        cout << " -> ";
+                    }
+                }
+                cout << "]";
+                break;
+            }
+
+            //쉼표로 파싱해야 할 경우 다음 코드 사용
+            // case make_list: { // 7-1. 쉼표로 구분한 것 파싱, 한 줄의 입력을 받아 vector로 추가
+            //     cout << "리스트 la에 추가할 숫자들을 쉼표(,)로 구분해 입력하세요 (예: 20, 10, 50, 40, 5):" << endl;
+            //     string line;
+            //     getline(cin, line);
+            
+            //     stringstream ss(line);
+            //     string token;  
+            //     int count = 0;
+
+            //     while (getline(ss, token, ',')) {
+            //         // 'token' (string)을 'num' (int)로 변환 (stoi 사용)
+            //         int num = std::stoi(token); 
+            //         testData.push_back(num); // 정수로 변환된 숫자를 la에 추가
+            //         count++;
+            //     }
+
+            //     for(auto lt: testData){
+            //         cout << lt;
+            //     }
+            //     break;
+            // }
+
+            case Exit: // 8. 종료
+                cout << "프로그램을 종료합니다." << endl;
+                break;
+
+            default:
+                cout << "잘못된 선택입니다. (0~7 사이 숫자)" << endl;
+                break;
+        } // end of switch
+    } while (static_cast<Menu>(selectMenu) != Exit); // end of do-while
+    
+    cin >> num; // 프로그램 종료 전 입력 대기 (참고 코드 반영)
+    return 0;
+}
