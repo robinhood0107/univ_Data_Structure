@@ -20,14 +20,15 @@ public:
         first = 0;
     }
     // 소멸자 추가 (메모리 누수 방지)
-    ~LinkedList() {
-        Node* current = first;
-        while (current != 0) {
-            Node* next = current->link;
-            delete current;
-            current = next;
-        }
-    }
+    //  선택임...
+    // ~LinkedList() {
+    //     Node* current = first;
+    //     while (current != 0) {
+    //         Node* next = current->link;
+    //         delete current;
+    //         current = next;
+    //     }
+    // }
     bool Delete(int);
     void Show();
     void Add(int element);
