@@ -455,8 +455,10 @@ lc는 얕은 복사로 temp와 같은 주소를 가리켰기 때문에, 이미 �
 
 
 
-//방법 1) 메모리 누수 감수하고 LinkedList& 사용
+//방법 1) (매우 매우 위험한 방식)메모리 누수 감수하고 LinkedList& 사용(멤버함수 종료 후 LinkedList* lc를 해제해줄 수가 없음)
 LinkedList& LinkedList::operator+(LinkedList& lb) {
+    //메모리 누수됨(멤버함수 종료 후 LinkedList* lc를 해제해줄 수가 없음)(매우 매우 위험한 방식)
+
     // LinkedList 객체를 반환하는 '+' 연산자 오버로딩 함수입니다.
 	// A + B 연산을 수행하면, A와 B의 합집합(Union)에 해당하는 새로운 LinkedList를 반환합니다.
 	// (이 코드는 두 리스트가 '정렬'되어 있다고 가정하고 동작합니다.)

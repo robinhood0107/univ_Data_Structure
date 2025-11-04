@@ -72,7 +72,7 @@ void LinkedList::Show() { // 전체 리스트를 순서대로 출력한다.
 }
 void LinkedList::Add(Employee element) // 임의 값을 삽입할 때 리스트가 오름차순으로 정렬이 되도록 한다
 {
-Node* newNode = new Node(element); //새로운 node생성
+	Node* newNode = new Node(element); //새로운 node생성
 	if (first == 0){ //head까지 비어있을 경우 //아예 빈 링크드리스트일 경우
 		first = newNode;
 		return; //Node(element)인 newNode를 바로 first에 연결시키고 바로 종료
@@ -107,7 +107,15 @@ Node* newNode = new Node(element); //새로운 node생성
 		}
 	//node중에 element랑 같은 경우는 따질 필요조차 없음(같은데 왜 추가함?)(그냥 자연스럽게 순회 돌고 아무짓도 안함)
 	}
+
+	// 4. [버그 수정] 'while' 루프가 끝까지 돌았다면
+    //    이 'newNode'가 가장 큰 값이므로 리스트의 "맨 뒤"에 추가합니다.
+    q->link = newNode;
 }
+
+
+
+
 bool LinkedList::Search(string eno) { // sno를 갖는 레코드를 찾기
 	Node *ptr = first;
 	while (ptr != 0) {
@@ -159,9 +167,13 @@ bool LinkedList::Delete(string eno) // delete the element
 
 
 LinkedList& LinkedList::operator+(LinkedList& lb) {
-    
+    //메모리 누수됨(멤버함수 종료 후 LinkedList* lc를 해제해줄 수가 없음)(매우 매우 위험한 방식)
+
+    // LinkedList 객체를 반환하는 '+' 연산자 오버로딩 함수입니다.
+	// A + B 연산을 수행하면, A와 B의 합집합(Union)에 해당하는 새로운 LinkedList를 반환합니다.
+	// (이 코드는 두 리스트가 '정렬'되어 있다고 가정하고 동작합니다.)
     // 1. 결과를 담을 새로운(비어있는) 연결 리스트 'lc'를 생성합니다.
-    LinkedList lc;
+	LinkedList* lc = new LinkedList();
 
 	//새로운 연결리스트에 서로 a>b a<b a=b를 따지면서 집어 넣는다고 생각하면 된다.
 	//그리고 Add 이후에는 add한것은 다음 노드로 이동시키기
@@ -176,18 +188,18 @@ LinkedList& LinkedList::operator+(LinkedList& lb) {
         
         // 3a. 두 노드의 데이터가 같은 경우 (교집합)
         if (a->data == b->data) {
-            lc.Add(a->data); // lc에 데이터를 한 번만 추가합니다.
+            lc->Add(a->data); // lc에 데이터를 한 번만 추가합니다.
             a = a->link;     // a를 다음 노드로 이동합니다.
             b = b->link;     // b를 다음 노드로 이동합니다.
         }
         // 3b. a의 데이터가 b보다 작은 경우
         else if (a->data < b->data) {
-            lc.Add(a->data); // lc에 a의 데이터를 추가합니다.
+            lc->Add(a->data); // lc에 a의 데이터를 추가합니다.
             a = a->link;     // a만 다음 노드로 이동합니다. (b는 그대로)
         }
         // 3c. b의 데이터가 a보다 작은 경우 (a->data > b->data)
         else { 
-            lc.Add(b->data); // lc에 b의 데이터를 추가합니다.
+            lc->Add(b->data); // lc에 b의 데이터를 추가합니다.
             b = b->link;     // b만 다음 노드로 이동합니다. (a는 그대로)
         }
     }
@@ -195,20 +207,18 @@ LinkedList& LinkedList::operator+(LinkedList& lb) {
     // 4. [나머지 처리 1]
     //    위 'while' 루프가 끝났을 때, 'a' 리스트의 노드가 아직 남아있는 경우
     while (a != 0) {
-        lc.Add(a->data); // 'a' 리스트의 남은 노드들을 'lc'에 모두 추가합니다.
+        lc->Add(a->data); // 'a' 리스트의 남은 노드들을 'lc'에 모두 추가합니다.
         a = a->link;
     }
     
     // 5. [나머지 처리 2]
     //    위 'while' 루프가 끝났을 때, 'b' 리스트의 노드가 아직 남아있는 경우
     while (b != 0) {
-        lc.Add(b->data); // 'b' 리스트의 남은 노드들을 'lc'에 모두 추가합니다.
+        lc->Add(b->data); // 'b' 리스트의 남은 노드들을 'lc'에 모두 추가합니다.
         b = b->link;
     }
 
-    // 6. 완성된 'lc' 리스트를 반환합니다.
-    //    (함수가 종료될 때 'lc'의 '복사본'이 안전하게 반환됩니다.)
-    return lc; 
+    return *lc; 
 }
 
 
@@ -216,7 +226,7 @@ enum Enum {
 	Add1, Add2, Delete, Show, Search, Merge, Exit
 };
 
-void main() {
+int main() {
 	Enum menu; // 메뉴
 	int selectMenu, num;
 	string eno, ename;
