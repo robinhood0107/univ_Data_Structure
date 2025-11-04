@@ -1,63 +1,82 @@
 /*
-* 2단계- 객체 연결 리스트: 단순한 linked list에서 insert는 올림차순으로 정렬되도록 처리, delete하는 알고리즘을 코딩
-* template version으로 구현
+* 1단계-정수 연결 리스트: 단순한 linked list에서 add, delete하는 알고리즘을 코딩
+* template 버전으로 만들기 
+*/
+
+//링크드 리스트 공부
+
+//링크드 리스트란?
+/*
+연결리스트로
+
+배열=순차적으로 연결된 공간에 데이터를 나열 하는 것이란면
+링크드리스트=순차적이지 않은(랜덤한) 공간에 데이터를 나열하는 것이다.
+
+링크드 리스트를 구성하는 요소는 다음과 같다
+1.노드(저장하는 곳) 2.포인터(노드에 붙어있는 다음노드의 주소를 저장해둠.)
+그리고 링크드리스트 전체에서 2가지의 부분을 따로 저장해 놓는다.
+3.헤드(링크드리스트에서 가장 처음 위치하는 노드), 4.테일(링크드리스트에서 가장 마지막에 위치하는 노드)
+
+링크드리스트는 확장되어서
+양방향(doubly) 링크드리스트 --노드가 포인터를 2개(이전, 이후)를 가짐 [원래는 포인터(이후) 1개만 가지잖아]
+원형 링크드리스트 --마지막 노드가 처음 노드를 참조함.(마지막 노드 포인터는 처음 노드 주소를 가리킨다.)
+
+가장 필수적으로 링크드 리스트가 구현해야 할 클래스 개수(이거 기억하고 있어야 함. 지운다고 했음.)
+Node() //필수, LinkedList와 friend 관계로 노드라는 기본단위
+
+LinkedList() //기본 생성자
+bool LinkedList::Delete(int); //필수, 노드 삭제
+void LinkedList::Add(int element); //필수, 임의 값을 삽입할 때 리스트가 오름차순으로 정렬이 되도록 한다
+LinkedList::LinkedList& operator+(LinkedList&);  //필수, merge에 해당함, 객체+객체로 연결리스트 2개 연결함
+bool LinkedList::Search(int data); //(졸라 간단함) //말그대로 데이터 찾아줌
+void LinkedList::Show(); //(졸라 간단함) //전체 리스트를 순서대로 출력한다.
+
+교수님이 merge delete insert 이 3개는 무조건 구현할 줄 알아야 한다고 함
+
+즉 node, linkedlist, delete, add(insert), merge(operator+)를 가장 먼저 구현
+Search, Show는 간단하게 구현가능함
+
+삽입 삭제시 생각해야 하는 케이스
+
+헤드 부분에 추가, 삭제
+중간 부분에 추가, 삭제
+꼬리 부분에 추가, 삭제
+
+이것 부분만 잘 기억해서 구성하면 금방 구현이 가능하다.
+
 */
 #include <iostream>
 #include <time.h>
 using namespace std;
-class Employee {
-	friend class Node;
-	friend class LinkedList;
-	string eno;
-	string ename;
-public:
-	Employee() {}
-	Employee(string sno, string sname) :eno(sno), ename(sname) {}
-	friend ostream& operator<<(ostream& os, Employee&);
-	bool operator<(Employee&);
-	bool operator==(Employee&);
-};
-ostream& operator<<(ostream& os, Employee& emp) {
-	os << " " << emp.eno << emp.ename;
-	return os;
-}
-bool Employee::operator==(Employee& emp) {
-	bool result = false;
-	if (eno == emp.eno)
-		return (ename == emp.eno);
-	else
-		return false;
-}
-bool Employee::operator<(Employee& emp) {
-	bool result = false;
-	if (eno == emp.eno)
-		return (ename < emp.eno);
-	else
-		return (eno < emp.eno);
-}
+
 class Node {
 	friend class LinkedList;
-	Employee data;
+	int data;
 	Node* link;
 public:
-	Node(Employee element) {
+	Node(int element) {
 		data = element;
-		link = nullptr;
+		link = 0;
 	}
 };
 
+
+//리스트는 node,pointer,head,tail 필요하다고 했잖아
+//이거는 일반 링크드 리스트라서 node(data),pointer(link),head(first)라는 이름으로 만든 것!
 class LinkedList {
-	Node* first;
+	Node* first; //head를 이렇게 first라는 포인터로 가리켜 준다.
 public:
 	LinkedList() {
-		first = nullptr;
+		first = 0; //c++11이하는 걍 0으로 해도 됨//이거 원래 원본은 0이었음 
 	}
-	bool Delete(string);
+	bool Delete(int);
 	void Show();
-	void Add(Employee);//sno로 정렬되도록 구현
-	bool Search(string);
-	LinkedList& operator+(LinkedList&);
+	void Add(int element);//정렬되도록 구현
+	bool Search(int data);
+	LinkedList operator+(LinkedList&);
 };
+
+
 void LinkedList::Show() { // 전체 리스트를 순서대로 출력한다.
 	Node* p = first; //일단 당연 head 위치부터 시작(가져오기)
 
@@ -70,7 +89,8 @@ void LinkedList::Show() { // 전체 리스트를 순서대로 출력한다.
 	}
 	cout << endl;
 }
-void LinkedList::Add(Employee element) // 임의 값을 삽입할 때 리스트가 오름차순으로 정렬이 되도록 한다
+
+void LinkedList::Add(int element) // 임의 값을 삽입할 때 리스트가 오름차순으로 정렬이 되도록 한다
 {
 	Node* newNode = new Node(element); //새로운 node생성
 	if (first == 0){ //head까지 비어있을 경우 //아예 빈 링크드리스트일 경우
@@ -113,24 +133,32 @@ void LinkedList::Add(Employee element) // 임의 값을 삽입할 때 리스트�
     q->link = newNode;
 }
 
-
-
-
-bool LinkedList::Search(string eno) { // sno를 갖는 레코드를 찾기
+bool LinkedList::Search(int data) { // 말 그대로 해당 data가 리스트에 있으면 true을 출력한다(없으면 false)
 	Node *ptr = first;
 	while (ptr != 0) {
-		if (ptr->data.eno == eno) //여기서 ptr->data.eno == eno 이렇게 비교
+		if (ptr->data == data) 
 			return true;
 		ptr = ptr->link;
 	}
 	return false;
 }
-bool LinkedList::Delete(string eno) // delete the element
+
+bool LinkedList::Delete(int element) // delete the element
 {
-	Node* q, * current = first;
-	q = current;
-	while (current != 0){
-        if (current->data.eno == eno) // 2. 삭제할 노드를 찾았습니다!
+	//Node* q, * current = first; q = current; 
+	//이거 C++문법인데 이렇게 선언할 경우 Node* q는 쓰레기값, Node* current = first로 초기화 되는거다
+	//그니까 char *a,*b = hello; 라고 한다면 *a는 그냥 선언만 되는 것 (cpp 컴파일러가 원래 이래) 
+	//이런 오류를 막기 위해서 따로 선언초기화 해라
+
+    // current: 현재 검사 중인 노드
+    // q: current의 바로 "이전" 노드를 따라가는 포인터
+    Node *current = first;
+    Node *q = 0; // 'q'는 NULL(0)로 시작해야 합니다. (이전 노드가 없다는 뜻)
+
+    // 1. 리스트를 순회하며 element를 찾습니다.
+    while (current != 0) 
+    {
+        if (current->data == element) // 2. 삭제할 노드를 찾았습니다!
         {
             if (q == 0) // 혹은 (current == first)
 			//둘이 완전히 똑같은 의미!!!!!
@@ -161,19 +189,14 @@ bool LinkedList::Delete(string eno) // delete the element
     // 4. 'while' 루프가 끝날 때까지 노드를 찾지 못했습니다.
     // 리스트에 해당 'element'가 없는 것입니다.
     return false; // 삭제 실패를 알립니다.
-
-	
 }
 
-
-LinkedList& LinkedList::operator+(LinkedList& lb) {
-    //메모리 누수됨(멤버함수 종료 후 LinkedList* lc를 해제해줄 수가 없음)(매우 매우 위험한 방식)
-
+LinkedList LinkedList::operator+(LinkedList& lb) {
     // LinkedList 객체를 반환하는 '+' 연산자 오버로딩 함수입니다.
 	// A + B 연산을 수행하면, A와 B의 합집합(Union)에 해당하는 새로운 LinkedList를 반환합니다.
 	// (이 코드는 두 리스트가 '정렬'되어 있다고 가정하고 동작합니다.)
     // 1. 결과를 담을 새로운(비어있는) 연결 리스트 'lc'를 생성합니다.
-	LinkedList* lc = new LinkedList();
+	LinkedList lc;
 
 	//새로운 연결리스트에 서로 a>b a<b a=b를 따지면서 집어 넣는다고 생각하면 된다.
 	//그리고 Add 이후에는 add한것은 다음 노드로 이동시키기
@@ -188,18 +211,18 @@ LinkedList& LinkedList::operator+(LinkedList& lb) {
         
         // 3a. 두 노드의 데이터가 같은 경우 (교집합)
         if (a->data == b->data) {
-            lc->Add(a->data); // lc에 데이터를 한 번만 추가합니다.
+            lc.Add(a->data); // lc에 데이터를 한 번만 추가합니다.
             a = a->link;     // a를 다음 노드로 이동합니다.
             b = b->link;     // b를 다음 노드로 이동합니다.
         }
         // 3b. a의 데이터가 b보다 작은 경우
         else if (a->data < b->data) {
-            lc->Add(a->data); // lc에 a의 데이터를 추가합니다.
+            lc.Add(a->data); // lc에 a의 데이터를 추가합니다.
             a = a->link;     // a만 다음 노드로 이동합니다. (b는 그대로)
         }
         // 3c. b의 데이터가 a보다 작은 경우 (a->data > b->data)
         else { 
-            lc->Add(b->data); // lc에 b의 데이터를 추가합니다.
+            lc.Add(b->data); // lc에 b의 데이터를 추가합니다.
             b = b->link;     // b만 다음 노드로 이동합니다. (a는 그대로)
         }
     }
@@ -207,56 +230,46 @@ LinkedList& LinkedList::operator+(LinkedList& lb) {
     // 4. [나머지 처리 1]
     //    위 'while' 루프가 끝났을 때, 'a' 리스트의 노드가 아직 남아있는 경우
     while (a != 0) {
-        lc->Add(a->data); // 'a' 리스트의 남은 노드들을 'lc'에 모두 추가합니다.
+        lc.Add(a->data); // 'a' 리스트의 남은 노드들을 'lc'에 모두 추가합니다.
         a = a->link;
     }
     
     // 5. [나머지 처리 2]
     //    위 'while' 루프가 끝났을 때, 'b' 리스트의 노드가 아직 남아있는 경우
     while (b != 0) {
-        lc->Add(b->data); // 'b' 리스트의 남은 노드들을 'lc'에 모두 추가합니다.
+        lc.Add(b->data); // 'b' 리스트의 남은 노드들을 'lc'에 모두 추가합니다.
         b = b->link;
     }
 
-    return *lc; 
+    return lc; 
 }
 
-
+//C++에서 enum은 0부터 시작 (이거 기억하기)
 enum Enum {
 	Add1, Add2, Delete, Show, Search, Merge, Exit
 };
-
 int main() {
 	Enum menu; // 메뉴
-	int selectMenu, num;
-	string eno, ename;
-	bool result = false;
+	int selectMenu;
+	int num = 0; bool result = false;
+	srand(time(NULL));
 	LinkedList la, lb, lc;
-	Employee* data;
+	int data = 0;
 	do {
-		cout << "0.ADD0, 1. Add1, 2.Delete, 3.Show, 4.Search, 5. Merge, 6. Exit 선택::";
+		cout << "0.ADD1, 1. Add2, 2.Delete, 3.Show, 4.Search, 5. Merge, 6. Exit 선택::";
 		cin >> selectMenu;
 		switch (static_cast<Enum>(selectMenu)) {
 		case Add1:
-			cout << "사원번호 입력:: ";
-			cin >> eno;
-			cout << "사원 이름 입력:: ";
-			cin >> ename;
-			data = new Employee(eno, ename);
-			la.Add(*data);
+			data = rand() % 49;
+			la.Add(data);
 			break;
 		case Add2:
-			cout << "사원번호 입력:: ";
-			cin >> eno;
-			cout << "사원 이름 입력:: ";
-			cin >> ename;
-			data = new Employee(eno, ename);
-			lb.Add(*data);
+			data = rand() % 49;
+			lb.Add(data);
 			break;
 		case Delete:
-			cout << "사원번호 입력:: ";
-			cin >> eno;
-			result = la.Delete(eno);
+			cin >> data;
+			result = la.Delete(data);
 			if (result)
 				cout << "삭제 완료";
 			break;
@@ -266,22 +279,20 @@ int main() {
 			cout << "리스트 lb = ";
 			lb.Show();
 			break;
-		case Search:
-			cout << "사원번호 입력:: ";
-			cin >> eno;
-			result = la.Search(eno);
+		case Search: // 회원 번호 검색
+			int n; cin >> n;
+			result = la.Search(n);
 			if (!result)
-				cout << "검색 값 = " << eno << " 데이터가 없습니다.";
+				cout << "검색 값 = " << n << " 데이터가 없습니다.";
 			else
-				cout << "검색 값 = " << eno << " 데이터가 존재합니다.";
+				cout << "검색 값 = " << n << " 데이터가 존재합니다.";
 			break;
 		case Merge:
 			lc = la + lb;
 			cout << "리스트 lc = ";
 			lc.Show();
 			break;
-
-		case Exit: // 꼬리 노드 삭제
+		case Exit:
 			break;
 		}
 	} while (static_cast<Enum>(selectMenu) != Exit);
