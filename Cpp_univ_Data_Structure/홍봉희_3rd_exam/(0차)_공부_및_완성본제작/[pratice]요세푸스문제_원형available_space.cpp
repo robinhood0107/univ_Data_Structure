@@ -278,6 +278,28 @@ CircularList CircularList::operator+(const CircularList& lb) {
         q = newNode;           // 새 노드가 이제 꼬리가 됨 (q -> newNode -> headerC)
     }
 
+    while (pA != headerA) {
+        Node* newNode = GetNode();  // 새 노드를 가져와서
+        newNode->data = pA->data; // 데이터 복사
+        pA = pA->link;            // pA만 다음으로 이동
+
+        // 9번과 동일한 O(1) 꼬리 삽입 로직
+        newNode->link = headerC;
+        q->link = newNode;
+        q = newNode;
+    }
+    
+    while (pB != headerB) {
+        Node* newNode = GetNode();  // 새 노드를 가져와서
+        newNode->data = pB->data; // 데이터 복사
+        pB = pB->link;            // pB만 다음으로 이동
+
+        // 9번과 동일한 O(1) 꼬리 삽입 로직
+        newNode->link = headerC;
+        q->link = newNode;
+        q = newNode;
+    }
+
     return lc;
 }
 
@@ -553,7 +575,7 @@ int main() {
             }
 
             case make_list: { // 7. 한 줄의 입력을 받아 vector로 추가
-                cout << "  리스트 la에 추가할 숫자들을 한 줄로 입력하세요 (예: 20 10 50 40 5):" << endl;
+                cout << "testData vector에 추가할 숫자들을 한 줄로 입력하세요 (예: 20 10 50 40 5):" << endl;
                 cin.ignore();
 
                 string line;
@@ -578,7 +600,7 @@ int main() {
 
             //쉼표로 파싱해야 할 경우 다음 코드 사용
             // case make_list: { // 7-1. 쉼표로 구분한 것 파싱, 한 줄의 입력을 받아 vector로 추가
-            //     cout << "리스트 la에 추가할 숫자들을 쉼표(,)로 구분해 입력하세요 (예: 20, 10, 50, 40, 5):" << endl;
+            //     cout << "testData vector에 추가할 숫자들을 쉼표(,)로 구분해 입력하세요 (예: 20, 10, 50, 40, 5):" << endl;
             //     string line;
             //     getline(cin, line);
             
