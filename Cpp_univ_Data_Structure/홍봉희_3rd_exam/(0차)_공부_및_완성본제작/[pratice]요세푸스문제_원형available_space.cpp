@@ -20,7 +20,6 @@ using namespace std;
 
 
 class Node {
-    friend class ListIterator;
     friend class CircularList;
     int data;
     Node* link;
