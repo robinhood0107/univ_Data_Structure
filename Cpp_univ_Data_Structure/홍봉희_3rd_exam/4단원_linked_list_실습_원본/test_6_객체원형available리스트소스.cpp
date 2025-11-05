@@ -40,6 +40,7 @@ char Employee::compare(const Employee* emp) const {
 
 
 }
+
 class Node {
 	friend class ListIterator;
 	friend class CircularList;
@@ -96,7 +97,7 @@ Node* CircularList::GetNode()
 
 }
 
-void CircularList::RetNode(Node* x)
+void CircularList::RetNode(Node* x){
 
 }
 ostream& operator<<(ostream& os, CircularList& l)
