@@ -172,6 +172,13 @@ public:
 
         cin << selectMenu;
         do{
+            switch(static_cast<Menu>(selectMenu)){
+                case asdf:
+
+                    break;
+
+
+            }
 
         }while(static_cast<Menu>(selectMenu) != Exit);
 
