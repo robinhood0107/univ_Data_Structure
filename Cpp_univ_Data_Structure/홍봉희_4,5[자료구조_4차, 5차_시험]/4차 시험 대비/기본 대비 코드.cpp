@@ -47,6 +47,23 @@ public:
         return NULL;
     }
 
+    // Inorder 출력 (정렬 확인용)
+    void Inorder(Node* t) {
+        if (t) {
+            Inorder(t->left);
+            cout << t->key << " ";
+            Inorder(t->right);
+        }
+    }
+
+    // [추가] 트리의 X (Height)
+    int Height(Node* t) {
+        if (!t) return 0;
+        int l = Height(t->left);
+        int r = Height(t->right);
+        return 1 + (l > r ? l : r);
+    }
+
     // [조건 4] Delete: Inorder Successor를 이용한 삭제 (재귀가 가장 간결함)
     Node* Delete(Node* t, int key) {
         if (!t) return NULL;
@@ -113,35 +130,77 @@ public:
         return pred;
     }
 
-    // [조건 6] Rank & Print: Inorder 응용 (하나로 통합하여 암기량 감소)
-    // mode 0: k-Rank 찾기, mode 1: 1~k등 출력
-    void RankOp(Node* t, int k, int& count, Node*& result, int mode) {
-        if (!t || (mode == 0 && result) || (mode == 1 && count >= k)) return;
+    // // [조건 6] Rank & Print: Inorder 응용 (하나로 통합하여 암기량 감소)
+    // // mode 0: k-Rank 찾기, mode 1: 1~k등 출력
+    // void RankOp(Node* t, int k, int& count, Node*& result, int mode) {
+    //     if (!t || (mode == 0 && result) || (mode == 1 && count >= k)) return;
 
-        RankOp(t->left, k, count, result, mode); // L
+    //     RankOp(t->left, k, count, result, mode); // L
 
-        count++; // V
-        if (mode == 0 && count == k) { result = t; return; }
-        if (mode == 1 && count <= k) cout << t->key << " ";
+    //     count++; // V
+    //     if (mode == 0 && count == k) { result = t; return; }
+    //     if (mode == 1 && count <= k) cout << t->key << " ";
 
-        RankOp(t->right, k, count, result, mode); // R
-    }
+    //     RankOp(t->right, k, count, result, mode); // R
+    // }
 
-    // Inorder 출력 (정렬 확인용)
-    void Inorder(Node* t) {
-        if (t) {
-            Inorder(t->left);
-            cout << t->key << " ";
-            Inorder(t->right);
+    //k번째 원소 찾기 (GetRank)
+    // t: 현재 노드, k: 찾는 등수, count: 현재 등수(참조), result: 결과 담을 포인터(참조)
+    void GetRank(Node* t, int k, int& count, Node*& result) {
+        // 1. 노드가 없거나, 이미 결과를 찾았으면 그만함
+        if (!t || result != NULL) return;
+
+        // L (왼쪽 파기)
+        GetRank(t->left, k, count, result);
+
+        // V (방문 - 카운트 세기)
+        count++;
+        if (count == k) {
+            result = t; // 찾았다!
+            return;     // 뒤도 안 돌아보고 종료
         }
+
+        // R (오른쪽 파기)
+        GetRank(t->right, k, count, result);
+    }
+    
+    //1등 ~ k등 출력하기 (PrintRank)
+    // t: 현재 노드, k: 출력할 한계 등수, count: 현재 등수(참조)
+    void PrintRank(Node* t, int k, int& count) {
+        // 1. 노드가 없거나, 이미 k개를 다 출력했으면 그만함
+        if (!t || count >= k) return;
+
+        // L (왼쪽)
+        PrintRank(t->left, k, count);
+
+        // V (방문 - 출력하기)
+        if (count < k) { // 아직 k개를 다 못 채웠으면
+            cout << t->key << " ";
+            count++; // 출력했으니 카운트 증가
+        }
+        
+        // R (오른쪽)
+        PrintRank(t->right, k, count);
     }
 
-    // [추가] 트리의 X (Height)
-    int Height(Node* t) {
-        if (!t) return 0;
-        int l = Height(t->left);
-        int r = Height(t->right);
-        return 1 + (l > r ? l : r);
+    // [추가 구현] LCA (Lowest Common Ancestor)
+    Node* FindLCA_Iter(Node* root, int u, int v) {
+        Node* t = root;
+        while (t) {
+            // 1. 두 값이 모두 현재 노드보다 작으면 -> 왼쪽으로 이동
+            if (t->key > u && t->key > v) {
+                t = t->left;
+            }
+            // 2. 두 값이 모두 현재 노드보다 크면 -> 오른쪽으로 이동
+            else if (t->key < u && t->key < v) {
+                t = t->right;
+            }
+            // 3. 갈라지는 지점(하나는 작고 하나는 큼) 또는 일치 -> 여기가 LCA
+            else {
+                return t;
+            }
+        }
+        return NULL;
     }
 };
 
