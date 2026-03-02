@@ -18,7 +18,12 @@ public:
     Node* root = NULL; // 생성자 대신 초기화
 
     void Insert(int key) {
-        
+        Node* p = root;
+        Node* q = NULL;
+
+        while(p){
+            
+        }
     }
 
     Node* Search(int key) {
